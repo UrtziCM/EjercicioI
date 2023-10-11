@@ -70,11 +70,15 @@ public class TablaPersonaController {
     	data = FXCollections.observableArrayList();
     	agregarButton.setOnAction(e -> agregarPersona(e));
     	deleteButton.setOnAction(e -> borrarPersona(e));
+    	/* Añadimos un Listener al texto de el textfield para ejecutarlo por cada carácter introducido*/
     	filterTxtf.textProperty().addListener(e -> {
+    		/* Creamos una FilteredList con los datos de la tabla */
     		FilteredList<Persona> filteredData = new FilteredList<Persona>(data);
+    		/* Establecemos la regla del filtro: Si no contiene el texto en el textfield no se muestra */
     		filteredData.setPredicate(s -> s.getNombre().contains(filterTxtf.getText()));
+    		/* Ordenamos la lista con una SortedList*/
     		SortedList<Persona> filteredSortedData = new SortedList<Persona>(filteredData);
-    		personaTableView.setItems(filteredSortedData);
+    		personaTableView.setItems(filteredSortedData); // Añadimos la lista ordenada a la tabla
     	});;
     }
     
@@ -111,6 +115,8 @@ public class TablaPersonaController {
     		FileChooser fileChooser = new FileChooser();
     		fileChooser.setTitle("Elige un directorio para guardar la tabla");
     		File dest = fileChooser.showSaveDialog(stage);
+    		if (dest == null)
+    			return;
     		try {
     			BufferedWriter bWriter = new BufferedWriter(new FileWriter(dest));
 				bWriter.write("\"Nombre\",\"Apellidos\",\"Edad\"\n");
@@ -130,6 +136,8 @@ public class TablaPersonaController {
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Elige un archivo del que importar la tabla");
 		File dest = fileChooser.showOpenDialog(stage);
+		if (dest == null)
+			return;
 		data.clear();
 		try {
 			BufferedReader bReader = new BufferedReader(new FileReader(dest));
