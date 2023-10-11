@@ -156,6 +156,7 @@ public class TablaPersonaController {
 					nuevaPersona = new Persona(datosPersona[0], datosPersona[1],Integer.parseInt(datosPersona[2]));
 				} catch (NumberFormatException e) {
 					mostrarVentanaEmergente("Mal formato de edad","La edad de" + datosPersona[0] + " " + datosPersona[1]+" es incorrecta, se ha ignorado.", AlertType.ERROR);
+					redLine = bReader.readLine();
 					continue;
 				}
 				if (!data.contains(nuevaPersona))
