@@ -152,10 +152,15 @@ public class TablaPersonaController {
 			while (redLine != null) {
 				String usableLine = redLine.replace("\"", "");
 				String[] datosPersona = usableLine.split(",");
-				try {					
-					nuevaPersona = new Persona(datosPersona[0], datosPersona[1],Integer.parseInt(datosPersona[2]));
+				try {
+					if (datosPersona.length == 3)
+						nuevaPersona = new Persona(datosPersona[0], datosPersona[1],Integer.parseInt(datosPersona[2]));
+					else {
+						redLine = bReader.readLine();
+						continue;
+					}
 				} catch (NumberFormatException e) {
-					mostrarVentanaEmergente("Mal formato de edad","La edad de" + datosPersona[0] + " " + datosPersona[1]+" es incorrecta, se ha ignorado.", AlertType.ERROR);
+					mostrarVentanaEmergente("Mal formato de edad","La edad de " + datosPersona[0] + " " + datosPersona[1]+" es incorrecta, se ha ignorado.", AlertType.ERROR);
 					redLine = bReader.readLine();
 					continue;
 				}
