@@ -1,6 +1,9 @@
 package tablaPersona;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
@@ -27,15 +30,9 @@ public class TablaPersonaController {
     
     @FXML
     private TableColumn<Persona, Integer> edadColumn;
-
+    
     @FXML
-    private TextField edadTxtf;
-
-    @FXML
-    private TextField apellidosTxtf;
-
-    @FXML
-    private TextField nombreTxtf;
+    private TextField filterTxtf;
 
     @FXML
     private TableView<Persona> personaTableView;
@@ -60,6 +57,12 @@ public class TablaPersonaController {
     	data = FXCollections.observableArrayList();
     	agregarButton.setOnAction(e -> agregarPersona(e));
     	deleteButton.setOnAction(e -> borrarPersona(e));
+    	filterTxtf.textProperty().addListener(e -> {
+    		FilteredList<Persona> filteredData = new FilteredList<Persona>(data);
+    		filteredData.setPredicate(s -> s.getNombre().contains(filterTxtf.getText()));
+    		SortedList<Persona> filteredSortedData = new SortedList<Persona>(filteredData);
+    		personaTableView.setItems(filteredSortedData);
+    	});;
     }
     
     @FXML
