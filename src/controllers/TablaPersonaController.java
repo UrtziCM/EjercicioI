@@ -138,15 +138,31 @@ public class TablaPersonaController {
 		File dest = fileChooser.showOpenDialog(stage);
 		if (dest == null)
 			return;
-		data.clear();
+		
 		try {
 			BufferedReader bReader = new BufferedReader(new FileReader(dest));
-			bReader.readLine();
 			String redLine = bReader.readLine();
+			if (!redLine.replace("\"", "").equals("Nombre,Apellidos,Edad")) {
+				mostrarVentanaEmergente("Archivo no válido", "No se puede leer este tipo de archivo", AlertType.ERROR);
+				bReader.close();
+				return;				
+			} else
+				redLine = bReader.readLine();
+			Persona nuevaPersona;
 			while (redLine != null) {
 				String usableLine = redLine.replace("\"", "");
 				String[] datosPersona = usableLine.split(",");
-				data.add(new Persona(datosPersona[0], datosPersona[1],Integer.parseInt(datosPersona[2])));
+				try {					
+					nuevaPersona = new Persona(datosPersona[0], datosPersona[1],Integer.parseInt(datosPersona[2]));
+				} catch (NumberFormatException e) {
+					mostrarVentanaEmergente("Mal formato de edad","La edad de" + datosPersona[0] + " " + datosPersona[1]+" es incorrecta, se ha ignorado.", AlertType.ERROR);
+					continue;
+				}
+				if (!data.contains(nuevaPersona))
+					data.add(nuevaPersona);
+				else
+					mostrarVentanaEmergente("Persona existente", "Se ha intentado importar una persona que ya existe: \n" + nuevaPersona
+							, AlertType.ERROR);
 				redLine = bReader.readLine();
 			}
 			bReader.close();
