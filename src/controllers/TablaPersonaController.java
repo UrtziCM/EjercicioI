@@ -1,5 +1,11 @@
-package tablaPersona;
-import javafx.application.Platform;
+package controllers;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -16,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Persona;
@@ -46,6 +53,12 @@ public class TablaPersonaController {
     @FXML
     private Button modifyButton;
 
+    @FXML
+    private Button exportarButton;
+    
+    @FXML
+    private Button importarButton;
+    
     
     private ObservableList<Persona> data;
     
@@ -57,11 +70,15 @@ public class TablaPersonaController {
     	data = FXCollections.observableArrayList();
     	agregarButton.setOnAction(e -> agregarPersona(e));
     	deleteButton.setOnAction(e -> borrarPersona(e));
+    	/* Añadimos un Listener al texto de el textfield para ejecutarlo por cada carácter introducido*/
     	filterTxtf.textProperty().addListener(e -> {
+    		/* Creamos una FilteredList con los datos de la tabla */
     		FilteredList<Persona> filteredData = new FilteredList<Persona>(data);
+    		/* Establecemos la regla del filtro: Si no contiene el texto en el textfield no se muestra */
     		filteredData.setPredicate(s -> s.getNombre().contains(filterTxtf.getText()));
+    		/* Ordenamos la lista con una SortedList*/
     		SortedList<Persona> filteredSortedData = new SortedList<Persona>(filteredData);
-    		personaTableView.setItems(filteredSortedData);
+    		personaTableView.setItems(filteredSortedData); // Añadimos la lista ordenada a la tabla
     	});;
     }
     
@@ -88,6 +105,71 @@ public class TablaPersonaController {
 		if (comprobarModificacion(personaTableView.getSelectionModel().getSelectedItem())) {    			
 			mostrarVentanaEmergente("Modificada una entrada", "Se ha modificado una entrada con éxito", AlertType.INFORMATION);
 		}
+    }
+    
+
+    @FXML
+    void exportarTabla(ActionEvent event) {
+    	if (data.size() > 0) {
+    		Stage stage = new Stage();
+    		FileChooser fileChooser = new FileChooser();
+    		fileChooser.setTitle("Elige un directorio para guardar la tabla");
+    		File dest = fileChooser.showSaveDialog(stage);
+    		if (dest == null)
+    			return;
+    		try {
+    			BufferedWriter bWriter = new BufferedWriter(new FileWriter(dest));
+				bWriter.write("\"Nombre\",\"Apellidos\",\"Edad\"\n");
+				for (Persona pers : data) {
+					bWriter.write("\"" + pers.getNombre() + "\",\"" + pers.getApellido()  + "\",\"" + pers.getEdad() + "\"\n");
+				}
+				bWriter.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    	}
+    }
+
+    @FXML
+    void importarTabla(ActionEvent event) {
+		Stage stage = new Stage();
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Elige un archivo del que importar la tabla");
+		File dest = fileChooser.showOpenDialog(stage);
+		if (dest == null)
+			return;
+		
+		try {
+			BufferedReader bReader = new BufferedReader(new FileReader(dest));
+			String redLine = bReader.readLine();
+			if (!redLine.replace("\"", "").equals("Nombre,Apellidos,Edad")) {
+				mostrarVentanaEmergente("Archivo no válido", "No se puede leer este tipo de archivo", AlertType.ERROR);
+				bReader.close();
+				return;				
+			} else
+				redLine = bReader.readLine();
+			Persona nuevaPersona;
+			while (redLine != null) {
+				String usableLine = redLine.replace("\"", "");
+				String[] datosPersona = usableLine.split(",");
+				try {					
+					nuevaPersona = new Persona(datosPersona[0], datosPersona[1],Integer.parseInt(datosPersona[2]));
+				} catch (NumberFormatException e) {
+					mostrarVentanaEmergente("Mal formato de edad","La edad de" + datosPersona[0] + " " + datosPersona[1]+" es incorrecta, se ha ignorado.", AlertType.ERROR);
+					continue;
+				}
+				if (!data.contains(nuevaPersona))
+					data.add(nuevaPersona);
+				else
+					mostrarVentanaEmergente("Persona existente", "Se ha intentado importar una persona que ya existe: \n" + nuevaPersona
+							, AlertType.ERROR);
+				redLine = bReader.readLine();
+			}
+			bReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		personaTableView.setItems(data);
     }
     
     private boolean comprobarModificacion(Persona pers) {
