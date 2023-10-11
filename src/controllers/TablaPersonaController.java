@@ -1,4 +1,9 @@
 package controllers;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -15,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Persona;
@@ -98,7 +104,22 @@ public class TablaPersonaController {
 
     @FXML
     void exportarTabla(ActionEvent event) {
-
+    	if (data.size() > 0) {
+    		Stage stage = new Stage();
+    		FileChooser fileChooser = new FileChooser();
+    		fileChooser.setTitle("Elige un directorio para guardar la tabla");
+    		File dest = fileChooser.showSaveDialog(stage);
+    		try {
+    			BufferedWriter bWriter = new BufferedWriter(new FileWriter(dest));
+				bWriter.write("\"Nombre\",\"Apellidos\",\"Edad\"\n");
+				for (Persona pers : data) {
+					bWriter.write("\"" + pers.getNombre() + "\",\"" + pers.getApellido()  + "\",\"" + pers.getEdad() + "\"\n");
+				}
+				bWriter.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+    	}
     }
 
     @FXML
