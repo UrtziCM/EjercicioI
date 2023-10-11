@@ -1,6 +1,8 @@
 package controllers;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -124,7 +126,26 @@ public class TablaPersonaController {
 
     @FXML
     void importarTabla(ActionEvent event) {
-
+		Stage stage = new Stage();
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Elige un archivo del que importar la tabla");
+		File dest = fileChooser.showOpenDialog(stage);
+		data.clear();
+		try {
+			BufferedReader bReader = new BufferedReader(new FileReader(dest));
+			bReader.readLine();
+			String redLine = bReader.readLine();
+			while (redLine != null) {
+				String usableLine = redLine.replace("\"", "");
+				String[] datosPersona = usableLine.split(",");
+				data.add(new Persona(datosPersona[0], datosPersona[1],Integer.parseInt(datosPersona[2])));
+				redLine = bReader.readLine();
+			}
+			bReader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		personaTableView.setItems(data);
     }
     
     private boolean comprobarModificacion(Persona pers) {
