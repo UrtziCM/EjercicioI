@@ -1,5 +1,4 @@
 package controllers;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -46,6 +45,12 @@ public class TablaPersonaController {
     @FXML
     private Button modifyButton;
 
+    @FXML
+    private Button exportarButton;
+    
+    @FXML
+    private Button importarButton;
+    
     
     private ObservableList<Persona> data;
     
@@ -88,6 +93,17 @@ public class TablaPersonaController {
 		if (comprobarModificacion(personaTableView.getSelectionModel().getSelectedItem())) {    			
 			mostrarVentanaEmergente("Modificada una entrada", "Se ha modificado una entrada con éxito", AlertType.INFORMATION);
 		}
+    }
+    
+
+    @FXML
+    void exportarTabla(ActionEvent event) {
+
+    }
+
+    @FXML
+    void importarTabla(ActionEvent event) {
+
     }
     
     private boolean comprobarModificacion(Persona pers) {
