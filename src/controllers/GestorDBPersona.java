@@ -22,7 +22,6 @@ public class GestorDBPersona {
         	ResultSet rs = pstmt.executeQuery();   
 				
 			 while (rs.next()) {
-		            int idPersona = rs.getInt("id");
 		            String nombre = rs.getString("nombre");
 		            String apellidos = rs.getString("apellidos");
 		            int edad = rs.getInt("edad");
