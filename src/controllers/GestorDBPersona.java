@@ -38,4 +38,32 @@ public class GestorDBPersona {
 	    }    
         return personas;    
     }
+
+	public void addPersona(Persona newPersona) throws SQLException {
+		conexion = new ConexionDB(); 
+	    Statement stmt = conexion.getConexion().createStatement();
+	    String sql = "INSERT INTO Persona(nombre,apellidos,edad) VALUES ('" + newPersona.getNombre() + "','" + newPersona.getApellido()+ "',"+ newPersona.getEdad() +")";
+	    stmt.executeUpdate(sql);
+	    conexion.closeConexion();
+	}
+	public void borrarPersona(Persona newPersona) throws SQLException {
+		conexion = new ConexionDB(); 
+	    Statement stmt = conexion.getConexion().createStatement();
+	    String sql = "DELETE FROM Persona WHERE nombre='" + newPersona.getNombre() + "' apellido='" + newPersona.getApellido() + "' edad=" + newPersona.getEdad();
+	    stmt.executeUpdate(sql);
+	    conexion.closeConexion();
+	}
+	public void modificarPersona(Persona newPersona) throws SQLException {
+		conexion = new ConexionDB(); 
+	    Statement stmt = conexion.getConexion().createStatement();
+	    String sql = "UPDATE Persona "
+	    		+ "SET nombre='"+newPersona.getNombre()+"',"
+    				+ "apellido='"+newPersona.getApellido()+"',"
+					+ "edad="+newPersona.getEdad()
+				+ "WHERE nombre='" + newPersona.getNombre()
+					+ "' apellido='" + newPersona.getApellido() 
+					+ "' edad=" + newPersona.getEdad();
+	    stmt.executeUpdate(sql);
+	    conexion.closeConexion();
+	}
 }
