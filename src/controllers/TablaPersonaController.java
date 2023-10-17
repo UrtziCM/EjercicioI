@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -61,13 +62,15 @@ public class TablaPersonaController {
     
     
     private ObservableList<Persona> data;
+    private GestorDBPersona gestorDB;
     
     @FXML
     public void initialize() {
     	nombreColumn.setCellValueFactory(new PropertyValueFactory<>("nombre"));
     	apellidosColumn.setCellValueFactory(new PropertyValueFactory<>("apellido"));
     	edadColumn.setCellValueFactory(new PropertyValueFactory<>("edad"));
-    	data = new GestorDBPersona().cargarPersonas();
+    	gestorDB = new GestorDBPersona();
+    	data = gestorDB.cargarPersonas();
     	agregarButton.setOnAction(e -> agregarPersona(e));
     	deleteButton.setOnAction(e -> borrarPersona(e));
     	/* Añadimos un Listener al texto de el textfield para ejecutarlo por cada carácter introducido*/
@@ -167,6 +170,7 @@ public class TablaPersonaController {
 				}
 				if (!data.contains(nuevaPersona))
 					data.add(nuevaPersona);
+					
 				else
 					mostrarVentanaEmergente("Persona existente", "Se ha intentado importar una persona que ya existe: \n" + nuevaPersona
 							, AlertType.ERROR);
@@ -216,8 +220,14 @@ public class TablaPersonaController {
 		agregarButton.setOnAction(e -> {
 			try {
 				Persona newPersona = new Persona(nombreTxtf.getText(),apellidosTxtf.getText(),Integer.parseInt(edadTxtf.getText()));
-				if (! data.contains(newPersona))
+				if (! data.contains(newPersona)) {					
 					data.add(newPersona);
+					try {
+						gestorDB.addPersona(newPersona);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
 				else
 					mostrarVentanaEmergente("Entrada existente", "Esa persona ya está registrada",AlertType.ERROR);
 				personaTableView.setItems(data);
