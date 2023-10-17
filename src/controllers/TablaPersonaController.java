@@ -67,7 +67,7 @@ public class TablaPersonaController {
     	nombreColumn.setCellValueFactory(new PropertyValueFactory<>("nombre"));
     	apellidosColumn.setCellValueFactory(new PropertyValueFactory<>("apellido"));
     	edadColumn.setCellValueFactory(new PropertyValueFactory<>("edad"));
-    	data = FXCollections.observableArrayList();
+    	data = new GestorDBPersona().cargarPersonas();
     	agregarButton.setOnAction(e -> agregarPersona(e));
     	deleteButton.setOnAction(e -> borrarPersona(e));
     	/* Añadimos un Listener al texto de el textfield para ejecutarlo por cada carácter introducido*/
@@ -80,6 +80,7 @@ public class TablaPersonaController {
     		SortedList<Persona> filteredSortedData = new SortedList<Persona>(filteredData);
     		personaTableView.setItems(filteredSortedData); // Añadimos la lista ordenada a la tabla
     	});;
+    	personaTableView.setItems(data);
     }
     
     @FXML
