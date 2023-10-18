@@ -60,10 +60,6 @@
                <rowConstraints>
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                </rowConstraints>
-               <children>
-                  <Button fx:id="exportarButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#exportarTabla" text="Exportar" />
-                  <Button fx:id="importarButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#importarTabla" prefHeight="41.0" prefWidth="157.0" text="Importar" GridPane.columnIndex="1" />
-               </children>
                <HBox.margin>
                   <Insets left="150.0" />
                </HBox.margin>
