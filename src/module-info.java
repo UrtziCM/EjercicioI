@@ -1,10 +1,4 @@
-/**
- * 
- */
-/**
- * 
- */
-module EjercicioH {
+module EjercicioI {
 	requires javafx.graphics;
 	requires javafx.fxml;
 	requires javafx.controls;
