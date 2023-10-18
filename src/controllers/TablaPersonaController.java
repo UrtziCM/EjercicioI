@@ -1,4 +1,5 @@
 package controllers;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,10 +18,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -83,6 +87,17 @@ public class TablaPersonaController {
     		SortedList<Persona> filteredSortedData = new SortedList<Persona>(filteredData);
     		personaTableView.setItems(filteredSortedData); // Añadimos la lista ordenada a la tabla
     	});;
+    	ContextMenu cMenuActions = new ContextMenu();
+    	MenuItem modificarMenuI = new MenuItem("Modificar");
+    	modificarMenuI.setOnAction(e -> modificarPersona(e));
+    	MenuItem borrarMenuI = new MenuItem("Borrar");
+    	borrarMenuI.setOnAction(e -> borrarPersona(e));
+		cMenuActions.getItems().add(modificarMenuI);
+		cMenuActions.getItems().add(borrarMenuI);
+
+		
+		personaTableView.setContextMenu(cMenuActions);
+    	
     	personaTableView.setItems(data);
     }
     
@@ -106,34 +121,13 @@ public class TablaPersonaController {
 
     @FXML
     void modificarPersona(ActionEvent event) {
-		if (comprobarModificacion(personaTableView.getSelectionModel().getSelectedItem())) {    			
-			mostrarVentanaEmergente("Modificada una entrada", "Se ha modificado una entrada con éxito", AlertType.INFORMATION);
+    	Persona oldPers = personaTableView.getSelectionModel().getSelectedItem();
+		if (comprobarModificacion(personaTableView.getSelectionModel().getSelectedItem())) {  
+			if (!oldPers.equals(personaTableView.getSelectionModel().getSelectedItem()))
+				mostrarVentanaEmergente("Modificada una entrada", "Se ha modificado una entrada con éxito", AlertType.INFORMATION);
 		}
     }
-    
-
-    @FXML
-    void exportarTabla(ActionEvent event) {
-    	if (data.size() > 0) {
-    		Stage stage = new Stage();
-    		FileChooser fileChooser = new FileChooser();
-    		fileChooser.setTitle("Elige un directorio para guardar la tabla");
-    		File dest = fileChooser.showSaveDialog(stage);
-    		if (dest == null)
-    			return;
-    		try {
-    			BufferedWriter bWriter = new BufferedWriter(new FileWriter(dest));
-				bWriter.write("\"Nombre\",\"Apellidos\",\"Edad\"\n");
-				for (Persona pers : data) {
-					bWriter.write("\"" + pers.getNombre() + "\",\"" + pers.getApellido()  + "\",\"" + pers.getEdad() + "\"\n");
-				}
-				bWriter.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-    	}
-    }
-    
+     
     private boolean comprobarModificacion(Persona pers) {
     	if (pers == null) return false;
 		try {				
