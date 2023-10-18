@@ -52,16 +52,15 @@ public class GestorDBPersona {
 	    stmt.executeUpdate(sql);
 	    conexion.closeConexion();
 	}
-	public void modificarPersona(Persona newPersona) throws SQLException {
+	public void modificarPersona(Persona oldPersona,Persona newPersona) throws SQLException {
 		conexion = new ConexionDB(); 
 	    Statement stmt = conexion.getConexion().createStatement();
 	    String sql = "UPDATE Persona "
 	    		+ "SET nombre='"+newPersona.getNombre()+"',"
-    				+ "apellido='"+newPersona.getApellido()+"',"
+    				+ "apellidos='"+newPersona.getApellido()+"',"
 					+ "edad="+newPersona.getEdad()
-				+ "WHERE nombre='" + newPersona.getNombre()
-					+ "' apellido='" + newPersona.getApellido() 
-					+ "' edad=" + newPersona.getEdad();
+				+ " WHERE nombre='" + oldPersona.getNombre()	+ "' AND apellidos='" + oldPersona.getApellido() 
+					+ "' AND edad=" + oldPersona.getEdad();
 	    stmt.executeUpdate(sql);
 	    conexion.closeConexion();
 	}
