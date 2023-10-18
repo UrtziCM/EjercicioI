@@ -133,55 +133,6 @@ public class TablaPersonaController {
 			}
     	}
     }
-
-    @FXML
-    void importarTabla(ActionEvent event) {
-		Stage stage = new Stage();
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Elige un archivo del que importar la tabla");
-		File dest = fileChooser.showOpenDialog(stage);
-		if (dest == null)
-			return;
-		
-		try {
-			BufferedReader bReader = new BufferedReader(new FileReader(dest));
-			String redLine = bReader.readLine();
-			if (!redLine.replace("\"", "").equals("Nombre,Apellidos,Edad")) {
-				mostrarVentanaEmergente("Archivo no válido", "No se puede leer este tipo de archivo", AlertType.ERROR);
-				bReader.close();
-				return;				
-			} else
-				redLine = bReader.readLine();
-			Persona nuevaPersona;
-			while (redLine != null) {
-				String usableLine = redLine.replace("\"", "");
-				String[] datosPersona = usableLine.split(",");
-				try {
-					if (datosPersona.length == 3)
-						nuevaPersona = new Persona(datosPersona[0], datosPersona[1],Integer.parseInt(datosPersona[2]));
-					else {
-						redLine = bReader.readLine();
-						continue;
-					}
-				} catch (NumberFormatException e) {
-					mostrarVentanaEmergente("Mal formato de edad","La edad de " + datosPersona[0] + " " + datosPersona[1]+" es incorrecta, se ha ignorado.", AlertType.ERROR);
-					redLine = bReader.readLine();
-					continue;
-				}
-				if (!data.contains(nuevaPersona))
-					data.add(nuevaPersona);
-					
-				else
-					mostrarVentanaEmergente("Persona existente", "Se ha intentado importar una persona que ya existe: \n" + nuevaPersona
-							, AlertType.ERROR);
-				redLine = bReader.readLine();
-			}
-			bReader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		personaTableView.setItems(data);
-    }
     
     private boolean comprobarModificacion(Persona pers) {
     	if (pers == null) return false;
@@ -261,22 +212,24 @@ public class TablaPersonaController {
 		agregarButton.setMaxWidth(agregarGPane.getWidth());
 
 		Scene agregarScene = new Scene(agregarGPane);
-		Stage agregarPersonaStg = new Stage();
+		Stage modificarPersonaStg = new Stage();
 		
 		agregarButton.setOnAction(e -> {
 			try {
 				int indexPersona = data.indexOf(pers);
-				data.set(indexPersona,new Persona(nombreTxtf.getText(),apellidosTxtf.getText(),Integer.parseInt(edadTxtf.getText())));
+				Persona newPersona = new Persona(nombreTxtf.getText(),apellidosTxtf.getText(),Integer.parseInt(edadTxtf.getText()));
+				data.set(indexPersona,newPersona);
 				personaTableView.setItems(data);
-				agregarPersonaStg.close();
+				gestorDB.modificarPersona(pers,newPersona);
+				modificarPersonaStg.close();
 			} catch (NumberFormatException numberFormat) {
 				mostrarVentanaEmergente("Edad no es numero", "La edad debe ser un numero", AlertType.ERROR);
 				return;
-			}			
+			} catch (SQLException sqlE) {}			
 		});
-		agregarPersonaStg.setScene(agregarScene);
-		agregarPersonaStg.initModality(Modality.APPLICATION_MODAL);
-		agregarPersonaStg.showAndWait();
+		modificarPersonaStg.setScene(agregarScene);
+		modificarPersonaStg.initModality(Modality.APPLICATION_MODAL);
+		modificarPersonaStg.showAndWait();
     }
     
 
