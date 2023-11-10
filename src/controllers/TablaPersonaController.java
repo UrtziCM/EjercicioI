@@ -94,8 +94,6 @@ public class TablaPersonaController {
     	borrarMenuI.setOnAction(e -> borrarPersona(e));
 		cMenuActions.getItems().add(modificarMenuI);
 		cMenuActions.getItems().add(borrarMenuI);
-
-		
 		personaTableView.setContextMenu(cMenuActions);
     	
     	personaTableView.setItems(data);

@@ -7,6 +7,10 @@ import java.sql.SQLException;
 public class ConexionDB {
     private Connection conexion;
     public ConexionDB() throws SQLException {
+    	
+    	
+    	
+    	
         String host = "localhost";
         String baseDatos = "personas";
         String usuario = "dm2";
